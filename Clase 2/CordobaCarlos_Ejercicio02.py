@@ -39,10 +39,8 @@ xl=x[:10]
 yl=y[:10]
 xt=x[10:]
 yt=y[10:]
-Coef=[]
 for i in range(4):
     c=AproxFit2(xl,yl,M[i])
-    Coef.append(c)
     xm=np.linspace(np.min(xl),np.max(xl),100)
     axs[i].set_title("M=" + str(M[i]))
     axs[i].plot(xm,f(xm,c),label="M=" + str(M[i]),color='red')
@@ -59,20 +57,21 @@ def E(x,y,c):
     a=f(x,c)-y
     c=np.power(a,2)
     b=np.sum(c)
-    return np.sqrt(b/N)
+    return np.log(np.sqrt(b/N))
 
 #Construcción de la Gráfica del Erms
 E_test=[]
 E_training=[]
-for i in range (len(Coef)):
-    E_test.append(E(xt,yt,Coef[i]))
-    E_training.append(E(xl,yl,Coef[i]))
-#Dado que E_test[-1] es mayor a un millón, se le asigna el valor de 0.9 para poderlo graficar
-E_test[-1]=0.9
-plt.plot(M,E_test,label='Test',c='red', marker = 'o',markerfacecolor='none',markeredgecolor='red', ms=10)
-plt.plot(M,E_training, label='Training',c='blue', marker = 'o',markerfacecolor='none',markeredgecolor='blue', ms=10)
+for i in range (10):
+    d=AproxFit2(xl,yl,i)
+    E_test.append(E(xt,yt,d))
+    E_training.append(E(xl,yl,d))
+
+q=np.arange(0,10)
+plt.plot(q,E_test,label='Test',c='red', marker = 'o',markerfacecolor='none',markeredgecolor='red', ms=10)
+plt.plot(q,E_training, label='Training',c='blue', marker = 'o',markerfacecolor='none',markeredgecolor='blue', ms=10)
 plt.xlabel("M")
-plt.ylabel("$E_{rms}$")
+plt.ylabel("$log(E_{rms})$")
 plt.legend()
 loc=0
 
